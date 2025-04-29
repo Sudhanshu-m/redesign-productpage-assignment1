@@ -1,5 +1,3 @@
-// ✅ Updated Home Page (Redesigned using existing structure)
-
 import React, { useEffect, useRef } from 'react';
 import HeroSection from './components/HeroSection';
 import HomeFAQs from './components/HomeFAQ';
