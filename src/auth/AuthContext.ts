@@ -1,93 +1,89 @@
-import { createContext, useState, useContext } from 'react'
+import { createContext, useState, useContext, ReactNode } from 'react';
 import type {
     SignInCredential,
     SignUpCredential,
     AuthResult,
     User,
     OauthSignInCallbackPayload,
-} from '@/@types/auth'
+} from '@/@types/auth';
 
+// Define the Auth context type
 type Auth = {
-    authenticated: boolean
-    user: User | null
-    signIn: (values: SignInCredential) => Promise<AuthResult>
-    signUp: (values: SignUpCredential) => Promise<AuthResult>
-    signOut: () => void
-    oAuthSignIn: (
-        callback: (payload: OauthSignInCallbackPayload) => void,
-    ) => void
-}
+    authenticated: boolean;
+    user: User | null;
+    signIn: (values: SignInCredential) => Promise<AuthResult>;
+    signUp: (values: SignUpCredential) => Promise<AuthResult>;
+    signOut: () => void;
+    oAuthSignIn: (callback: (payload: OauthSignInCallbackPayload) => void) => void;
+};
 
+// Placeholder functions for handling sign-in, sign-up, and OAuth
 const defaultFunctionPlaceHolder = async (): Promise<AuthResult> => {
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0));
     return {
         status: '',
         message: '',
-    }
-}
+    };
+};
 
 const defaultOAuthSignInPlaceHolder = (
-    callback: (payload: OauthSignInCallbackPayload) => void,
+    callback: (payload: OauthSignInCallbackPayload) => void
 ): void => {
     callback({
         onSignIn: () => {},
         redirect: () => {},
-    })
-}
+    });
+};
 
-// Create a context to hold authentication data
+// Create Auth context
 const AuthContext = createContext<Auth>({
     authenticated: false,
-    user: null, // User data will be fetched or set later
+    user: null,
     signIn: async () => defaultFunctionPlaceHolder(),
     signUp: async () => defaultFunctionPlaceHolder(),
     signOut: () => {},
     oAuthSignIn: defaultOAuthSignInPlaceHolder,
-})
+});
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [authenticated, setAuthenticated] = useState(false)
-    const [user, setUser] = useState<User | null>(null)
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [authenticated, setAuthenticated] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
 
-    // SignIn function, sets authenticated and user state
+    // Simulate sign-in function
     const signIn = async (values: SignInCredential): Promise<AuthResult> => {
-        // Logic for signing in (e.g., API call to verify credentials)
-        // Here, we just simulate successful login
-        setAuthenticated(true)
-        setUser({ name: 'John Doe', email: 'johndoe@example.com' }) // Dummy user data
+        // Simulate successful sign-in
+        setAuthenticated(true);
+        setUser({ name: 'John Doe', email: 'johndoe@example.com' }); // Dummy user data
         return {
             status: 'success',
             message: 'Signed in successfully',
-        }
-    }
+        };
+    };
 
-    // SignUp function, sets authenticated and user state
+    // Simulate sign-up function
     const signUp = async (values: SignUpCredential): Promise<AuthResult> => {
-        // Logic for signing up (e.g., API call to create new user)
-        // Here, we just simulate successful signup
-        setAuthenticated(true)
-        setUser({ name: values.username, email: `${values.username}@example.com` }) // Dummy user data
+        // Simulate successful sign-up
+        setAuthenticated(true);
+        setUser({ name: values.username, email: `${values.username}@example.com` }); // Dummy user data
         return {
             status: 'success',
             message: 'Signed up successfully',
-        }
-    }
+        };
+    };
 
-    // SignOut function, resets authenticated and user state
+    // Simulate sign-out function
     const signOut = () => {
-        setAuthenticated(false)
-        setUser(null)
-    }
+        setAuthenticated(false);
+        setUser(null); // Clear user data
+    };
 
-    // OAuth SignIn (this would typically interact with an OAuth provider)
-    const oAuthSignIn = (
-        callback: (payload: OauthSignInCallbackPayload) => void,
-    ) => {
+    // OAuth Sign-In function (example placeholder)
+    const oAuthSignIn = (callback: (payload: OauthSignInCallbackPayload) => void) => {
         callback({
-            onSignIn: () => signIn({ username: 'oauthUser', password: 'password' }), // Dummy OAuth SignIn
-            redirect: () => {}, // This could be a redirect to a different page
-        })
-    }
+            onSignIn: () => signIn({ username: 'oauthUser', password: 'password' }), // Dummy OAuth Sign-In
+            redirect: () => {}, // Example redirect function
+        });
+    };
 
     return (
         <AuthContext.Provider
@@ -102,15 +98,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         >
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
+// Hook to access authentication context
 export const useAuth = (): Auth => {
-    const context = useContext(AuthContext)
+    const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider')
+        throw new Error('useAuth must be used within an AuthProvider');
     }
-    return context
-}
+    return context;
+};
 
-export default AuthContext
+export default AuthContext;
